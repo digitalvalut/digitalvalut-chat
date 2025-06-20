@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>DigitalValut Chat</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <!-- Firebase App (modulare) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+
+    // Configurazione Firebase (usa la tua)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAKJcVoPz562xe_CGtBMKL5AFzBvXMLEnA",
+      authDomain: "digitalvalut-chat.firebaseapp.com",
+      databaseURL: "https://digitalvalut-chat-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "digitalvalut-chat",
+      storageBucket: "digitalvalut-chat.firebasestorage.app",
+      messagingSenderId: "60998756519",
+      appId: "1:60998756519:web:3ff1e5a0fed83ec7859382"
+    };
+
+    // Inizializza Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Password per la crittografia
+    const password = "Cabana78";
+
+    // Riferimento al nodo messaggi
+    const messagesRef = ref(db, "messages");
+
+    window.onload = () => {
+      const form = document.getElementById("chat-form");
+      const input = document.getElementById("message-input");
+      const messagesList = document.getElementById("messages");
+
+      // Funzione per decriptare
+      function decryptMessage(encrypted) {
+        try {
+          const bytes = CryptoJS.AES.decrypt(encrypted, password);
+          const originalText = bytes.toString(CryptoJS.enc.Utf8);
+          return originalText || "[Decryption error]";
+        } catch {
+          return "[Decryption error]";
+        }
+      }
+
+      // Funzione per aggiungere messaggio alla lista
+      function addMessage(text) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        messagesList.appendChild(li);
+      }
+
+      // Ascolta nuovi messaggi dal database
+      onChildAdded(messagesRef, (data) => {
+        const encryptedMsg = data.val();
+        const decryptedMsg = decryptMessage(encryptedMsg);
+        addMessage(decryptedMsg);
+      });
+
+      // Invio messaggio
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        // Cripta messaggio
+        const encrypted = CryptoJS.AES.encrypt(msg, password).toString();
+
+        // Salva nel database
+        push(messagesRef, encrypted);
+
+        input.value = "";
+      });
+    };
+  </script>
+</head>
+<body>
+  <h1>DigitalValut Chat</h1>
+  <ul id="messages"></ul>
+  <form id="chat-form">
+    <input type="text" id="message-input" placeholder="Scrivi un messaggio..." autocomplete="off" />
+    <button type="submit">Invia</button>
+  </form>
+</body>
+</html>

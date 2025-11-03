@@ -4,9 +4,10 @@
 
 ![DigitalValut Logo](assets/logo.png)
 
-[![License: MIT](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/MIT_Logo_New.svg/1200px-MIT_Logo_New.svg.png)
-[![Flutter](https://i.ytimg.com/vi/_CIHLJHVoN8/sddefault.jpg)
-[![Platform](https://i.ytimg.com/vi/fw_9A8iD1g0/hqdefault.jpg)
+[![Flutter CI/CD](https://github.com/digitalvalut/digitalvalut-chat/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/digitalvalut/digitalvalut-chat/actions)
+[![License: MIT](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/License_icon-mit.svg/1024px-License_icon-mit.svg.png)
+[![Flutter](https://i.ytimg.com/vi/-mYLjTYn4ZA/sddefault.jpg)
+[![Platform](https://i.ytimg.com/vi/nk6ixe_1OV0/maxresdefault.jpg)
 
 ---
 
@@ -108,7 +109,7 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 # Clone this repository to your local machine
-git clone https://github.com/yourusername/digitalvalut_chat.git
+git clone https://github.com/digitalvalut/digitalvalut_chat.git
 cd digitalvalut_chat
 ```
 
@@ -238,6 +239,103 @@ flutter build ios --release
    - Select your device
    - Drag the .app file to Installed Apps
 2. Or use TestFlight for beta distribution
+
+---
+
+## ☁️ Cloud Build & Deploy (FREE - Recommended)
+
+### 🚀 Automatic Build with GitHub Actions
+
+This repository includes **GitHub Actions workflows** that automatically build your app whenever you push code. No local Flutter installation needed!
+
+#### What Gets Built Automatically:
+- ✅ **Android APK** (Release) - Ready to install
+- ✅ **Flutter Web** (Release) - Ready for Netlify
+- ✅ **Code Analysis** - Automated testing
+- ✅ **Artifacts Storage** - 30-day retention
+
+#### How to Use:
+
+1. **Push code to GitHub**:
+```bash
+git add .
+git commit -m "Update app"
+git push origin master
+```
+
+2. **Download builds**:
+   - Go to: https://github.com/digitalvalut/digitalvalut-chat/actions
+   - Click latest workflow run
+   - Download artifacts:
+     - `android-release-apk` → APK file for Android
+     - `flutter-web-build` → Web files for Netlify
+
+#### Build Status:
+Check your builds at: https://github.com/digitalvalut/digitalvalut-chat/actions
+
+---
+
+### 🌐 Deploy to Netlify (FREE Hosting)
+
+Deploy your Flutter web app to the internet in 2 minutes - completely FREE!
+
+#### Option 1: Drag & Drop (Easiest)
+
+1. **Get the web build**:
+   - Download `flutter-web-build` artifact from GitHub Actions
+   - Extract the ZIP file
+
+2. **Deploy to Netlify**:
+   - Visit: https://app.netlify.com/drop
+   - Drag the `build/web` folder
+   - Your app is live! 🎉
+
+3. **Get your link**:
+   - Netlify gives you: `https://[random-name].netlify.app`
+   - Custom domain available (optional)
+
+#### Option 2: Connect GitHub (Auto-Deploy)
+
+1. **Sign up** at https://netlify.com (free account)
+
+2. **New Site from Git**:
+   - Click "Add new site" → "Import existing project"
+   - Connect GitHub
+   - Select `digitalvalut-chat` repository
+
+3. **Configure build**:
+   - Build command: `flutter build web --release`
+   - Publish directory: `build/web`
+   - Click "Deploy site"
+
+4. **Auto-deploy enabled**:
+   - Every push = automatic deployment
+   - Live in 2-3 minutes
+
+#### Your Live App:
+- **Web Demo**: https://digitalvalut-chat.netlify.app
+- **Download APK**: Available on website
+- **Share Link**: Send to friends/investors
+
+---
+
+### 📲 GitHub Releases (APK Distribution)
+
+Share your Android APK with users:
+
+1. **Create Release**:
+   - Go to: https://github.com/digitalvalut/digitalvalut-chat/releases/new
+   - Tag: `v1.0.0`
+   - Title: `DigitalValut Chat v1.0.0`
+
+2. **Upload APK**:
+   - Attach `app-release.apk` from GitHub Actions
+   - Add changelog
+   - Publish release
+
+3. **Share download link**:
+   - Direct APK link for users
+   - Installation instructions included
 
 ---
 
@@ -446,7 +544,7 @@ We welcome contributions from the community! Here's how you can help:
 ### Getting Help
 
 - **Documentation**: https://digitalvalut.chat/docs
-- **Issues**: https://github.com/yourusername/digitalvalut_chat/issues
+- **Issues**: https://github.com/digitalvalut/digitalvalut_chat/issues
 - **Community**: https://discord.gg/digitalvalut
 - **Email**: support@digitalvalut.chat
 
@@ -495,7 +593,7 @@ SOFTWARE.
 ## 🌍 Links
 
 - **Website**: https://digitalvalut.chat
-- **GitHub**: https://github.com/yourusername/digitalvalut_chat
+- **GitHub**: https://github.com/digitalvalut/digitalvalut_chat
 - **Twitter**: https://twitter.com/digitalvalut
 - **LinkedIn**: https://linkedin.com/company/digitalvalut
 - **Documentation**: https://docs.digitalvalut.chat

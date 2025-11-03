@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/theme_provider.dart';
+import 'profile_screen.dart';
 
 /// Settings screen
 class SettingsScreen extends StatelessWidget {
@@ -28,6 +29,22 @@ class SettingsScreen extends StatelessWidget {
                   );
                 },
                 secondary: const Icon(Icons.dark_mode),
+              );
+            },
+          ),
+          
+          const Divider(),
+          const _SectionHeader(title: 'Account'),
+          
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Il Mio Profilo'),
+            subtitle: const Text('Visualizza ID e chiave pubblica'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
               );
             },
           ),

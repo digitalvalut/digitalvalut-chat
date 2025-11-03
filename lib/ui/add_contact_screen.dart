@@ -1,11 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import '../database/database_service.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
+import '../services/user_profile_service.dart';
 
 /// Add contact screen with QR code support
 class AddContactScreen extends StatefulWidget {
@@ -22,12 +25,27 @@ class _AddContactScreenState extends State<AddContactScreen> {
   final _uuid = const Uuid();
   
   int _selectedTab = 0;
+  String? _qrCodeData;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadQRCodeData();
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _publicKeyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadQRCodeData() async {
+    final userProfileService = Provider.of<UserProfileService>(context, listen: false);
+    final qrData = await userProfileService.getQRCodeData();
+    setState(() {
+      _qrCodeData = qrData;
+    });
   }
 
   Future<void> _addContact() async {
@@ -66,6 +84,39 @@ class _AddContactScreenState extends State<AddContactScreen> {
         SnackBar(content: Text('❌ Failed to add contact: $e')),
       );
     }
+  }
+
+  Future<void> _openQRScanner() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (context) => const QRScannerScreen()),
+    );
+    
+    if (result != null) {
+      _handleQRCodeScanned(result);
+    }
+  }
+
+  void _handleQRCodeScanned(String qrData) {
+    final contactData = UserProfileService.parseQRCodeData(qrData);
+    
+    if (contactData == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ QR code non valido')),
+      );
+      return;
+    }
+    
+    // Compila i campi del form con i dati scansionati
+    setState(() {
+      _nameController.text = contactData.name;
+      _publicKeyController.text = contactData.publicKey;
+      _selectedTab = 0; // Torna alla tab manuale
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('✅ Dati contatto acquisiti dal QR code')),
+    );
   }
 
   @override
@@ -199,11 +250,9 @@ class _AddContactScreenState extends State<AddContactScreen> {
             const SizedBox(height: 16),
             
             OutlinedButton.icon(
-              onPressed: () {
-                // TODO: Scan QR code
-              },
+              onPressed: _openQRScanner,
               icon: const Icon(Icons.qr_code_scanner),
-              label: const Text('Scan QR Code'),
+              label: const Text('Scansiona QR Code'),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.all(16),
               ),
@@ -220,50 +269,164 @@ class _AddContactScreenState extends State<AddContactScreen> {
       child: Column(
         children: [
           const Text(
-            'Share your QR code',
+            'Condividi il tuo QR code',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           
           const SizedBox(height: 16),
           
           const Text(
-            'Have your contact scan this code to add you',
+            'Fai scansionare questo codice al tuo contatto per aggiungerti',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey),
           ),
           
           const SizedBox(height: 32),
           
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: QrImageView(
-              data: 'digitalvalut://add_contact?id=user_id&key=public_key',
-              version: QrVersions.auto,
-              size: 250,
-            ),
-          ),
+          if (_qrCodeData != null)
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: QrImageView(
+                data: _qrCodeData!,
+                version: QrVersions.auto,
+                size: 250,
+                backgroundColor: Colors.white,
+              ),
+            )
+          else
+            const CircularProgressIndicator(),
           
           const SizedBox(height: 32),
           
           ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Implement QR scanner
-            },
+            onPressed: _openQRScanner,
             icon: const Icon(Icons.qr_code_scanner),
-            label: const Text('Scan Contact\'s QR Code'),
+            label: const Text('Scansiona QR Code del contatto'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.all(16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// QR Scanner Screen
+class QRScannerScreen extends StatefulWidget {
+  const QRScannerScreen({super.key});
+
+  @override
+  State<QRScannerScreen> createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<QRScannerScreen> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
+  bool hasScanned = false;
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      if (!hasScanned && scanData.code != null) {
+        setState(() {
+          hasScanned = true;
+        });
+        controller.pauseCamera();
+        Navigator.pop(context, scanData.code);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scansiona QR Code'),
+        backgroundColor: Colors.black,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 5,
+            child: QRView(
+              key: qrKey,
+              onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                borderColor: Theme.of(context).primaryColor,
+                borderRadius: 10,
+                borderLength: 30,
+                borderWidth: 10,
+                cutOutSize: 300,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              color: Colors.black,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Posiziona il QR code nel riquadro',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            await controller?.toggleFlash();
+                            setState(() {});
+                          },
+                          icon: FutureBuilder<bool?>(
+                            future: controller?.getFlashStatus(),
+                            builder: (context, snapshot) {
+                              return Icon(
+                                snapshot.data == true
+                                    ? Icons.flash_on
+                                    : Icons.flash_off,
+                                color: Colors.white,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          onPressed: () async {
+                            await controller?.flipCamera();
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.flip_camera_ios,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ],

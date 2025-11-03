@@ -9,6 +9,7 @@ import 'database/database_service.dart';
 import 'ui/auth_screen.dart';
 import 'ui/chat_list_screen.dart';
 import 'services/theme_provider.dart';
+import 'services/user_profile_service.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -39,6 +40,15 @@ void main() async {
     await databaseService.initialize();
   }
   
+  // Initialize user profile (genera chiavi se al primo avvio)
+  final userProfileService = UserProfileService();
+  try {
+    await userProfileService.initializeProfile();
+    debugPrint('✅ Profilo utente inizializzato');
+  } catch (e) {
+    debugPrint('❌ Errore nell\'inizializzazione del profilo: $e');
+  }
+  
   // Run the app
   runApp(
     MultiProvider(
@@ -46,6 +56,7 @@ void main() async {
         if (databaseService != null)
           Provider<DatabaseService>.value(value: databaseService),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider<UserProfileService>.value(value: userProfileService),
       ],
       child: const DigitalValutApp(),
     ),

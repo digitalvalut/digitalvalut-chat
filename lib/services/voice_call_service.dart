@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../crypto/encryption_service.dart';
 import 'package:cryptography/cryptography.dart';
@@ -326,12 +327,17 @@ class VoiceCallService {
   Future<void> toggleSpeaker() async {
     _isSpeakerOn = !_isSpeakerOn;
     
-    // This is platform-specific
-    try {
-      await Helper.setSpeakerphoneOn(_isSpeakerOn);
-      print(_isSpeakerOn ? '🔊 Speaker ON' : '🔇 Speaker OFF');
-    } catch (e) {
-      print('⚠️ Failed to toggle speaker: $e');
+    // This is platform-specific (not available on web)
+    if (!kIsWeb) {
+      try {
+        await Helper.setSpeakerphoneOn(_isSpeakerOn);
+        print(_isSpeakerOn ? '🔊 Speaker ON' : '🔇 Speaker OFF');
+      } catch (e) {
+        print('⚠️ Failed to toggle speaker: $e');
+      }
+    } else {
+      // On web, speaker toggle is handled by browser
+      print(_isSpeakerOn ? '🔊 Speaker mode (web)' : '🔇 Earpiece mode (web)');
     }
   }
   

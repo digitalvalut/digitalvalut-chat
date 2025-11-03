@@ -7,6 +7,10 @@ gradle.projectsEvaluated {
                 if (!namespace && subproject.name == 'flutter_windowmanager') {
                     namespace = 'com.example.flutter_windowmanager'
                 }
+                // Set namespace for qr_code_scanner if not set
+                if (!namespace && subproject.name == 'qr_code_scanner') {
+                    namespace = 'net.touchcapture.qr.flutterqr'
+                }
             }
         }
     }

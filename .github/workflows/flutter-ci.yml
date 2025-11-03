@@ -1,0 +1,99 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  # Build Android APK
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+        cache: true
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Analyze code
+      run: flutter analyze
+    
+    - name: Run tests
+      run: flutter test
+      continue-on-error: true
+    
+    - name: Build Android APK (Release)
+      run: flutter build apk --release
+    
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+    
+    - name: Create Release Asset
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: |
+        echo "APK built successfully" >> $GITHUB_STEP_SUMMARY
+        echo "Download from Actions Artifacts" >> $GITHUB_STEP_SUMMARY
+
+  # Build Flutter Web
+  build-web:
+    name: Build Flutter Web
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+        cache: true
+    
+    - name: Enable Flutter Web
+      run: flutter config --enable-web
+    
+    - name: Install dependencies
+      run: flutter pub get
+    
+    - name: Build Flutter Web (Release)
+      run: flutter build web --release --base-href=/
+    
+    - name: Upload Web artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-web-build
+        path: build/web/
+        retention-days: 30
+    
+    - name: Create deployment summary
+      run: |
+        echo "🌐 Web build completed successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "📦 Download from Actions Artifacts to deploy on Netlify" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Netlify Deploy Steps:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download 'flutter-web-build' artifact" >> $GITHUB_STEP_SUMMARY
+        echo "2. Drag & drop to netlify.com/drop" >> $GITHUB_STEP_SUMMARY
+        echo "3. Your app will be live at https://[random].netlify.app" >> $GITHUB_STEP_SUMMARY

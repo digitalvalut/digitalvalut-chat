@@ -41,7 +41,7 @@ dependencies:
   local_auth: ^2.3.0
   
   # Screenshot Blocking
-  flutter_windowmanager: ^0.2.0
+  # flutter_windowmanager: ^0.2.0  # Temporarily disabled due to namespace issue
   
   # UUID Generation
   uuid: ^4.5.1

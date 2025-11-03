@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
+// import 'package:flutter_windowmanager/flutter_windowmanager.dart';  // Temporarily disabled
 
 import 'database/database_service.dart';
 import 'ui/auth_screen.dart';
@@ -23,12 +23,13 @@ void main() async {
     ]);
     
     // Enable screenshot protection globally (Android only)
-    try {
-      await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-    } catch (e) {
-      // Ignore error on iOS or other platforms
-      debugPrint('Screenshot protection not available: $e');
-    }
+    // Temporarily disabled flutter_windowmanager due to namespace issues
+    // try {
+    //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    // } catch (e) {
+    //   // Ignore error on iOS or other platforms
+    //   debugPrint('Screenshot protection not available: $e');
+    // }
   }
   
   // Initialize database (conditional for web)

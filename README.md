@@ -2,7 +2,9 @@
 
 **Military-Grade Secure Messaging with Quantum-Resistant Encryption**
 
-![DigitalValut Logo](assets/logo.png)
+<div align="center">
+  <img src="logo.png" alt="DigitalValut Logo" width="200"/>
+</div>
 
 [![Flutter CI/CD](https://github.com/digitalvalut/digitalvalut-chat/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/digitalvalut/digitalvalut-chat/actions)
 [![License: MIT](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/License_icon-mit.svg/1024px-License_icon-mit.svg.png)

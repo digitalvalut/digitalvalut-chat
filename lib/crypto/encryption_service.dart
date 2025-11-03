@@ -24,12 +24,12 @@ class EncryptionService {
     
     await _secureStorage.write(
       key: 'public_key_$userId',
-      value: base64Encode(publicKeyBytes.bytes),
+      value: base64Encode((publicKeyBytes as SimplePublicKey).bytes),
     );
     
     await _secureStorage.write(
       key: 'private_key_$userId',
-      value: base64Encode(privateKeyData.bytes),
+      value: base64Encode((privateKeyData as SimpleKeyPairData).bytes),
     );
   }
   

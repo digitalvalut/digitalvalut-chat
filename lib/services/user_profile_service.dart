@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cryptography/cryptography.dart';
 import '../crypto/encryption_service.dart';
 
 /// Servizio per gestire il profilo dell'utente e le chiavi crittografiche
@@ -36,7 +37,7 @@ class UserProfileService {
       
       // Ottieni la chiave pubblica in formato base64
       final publicKey = await keyPair.extractPublicKey();
-      final publicKeyBase64 = base64Encode(publicKey.bytes);
+      final publicKeyBase64 = base64Encode((publicKey as SimplePublicKey).bytes);
       
       // Salva ID utente e chiave pubblica
       await _secureStorage.write(key: _userIdKey, value: userId);

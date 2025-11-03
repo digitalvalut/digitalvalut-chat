@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../database/database_service.dart';
 import '../models/message.dart';
+import '../services/voice_call_service.dart';
+import '../crypto/encryption_service.dart';
+import 'voice_call_screen.dart';
 
 /// Chat screen with ephemeral message support
 class ChatScreen extends StatefulWidget {
@@ -164,6 +167,37 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _initiateVoiceCall() async {
+    try {
+      // Create voice call service
+      final encryptionService = EncryptionService();
+      final callService = VoiceCallService(encryptionService);
+      
+      // Initialize the call service
+      await callService.initialize();
+      
+      // Navigate to voice call screen
+      if (!mounted) return;
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => VoiceCallScreen(
+            callService: callService,
+            contactName: widget.contactName,
+          ),
+        ),
+      );
+      
+      // Start the call
+      await callService.startCall();
+      
+    } catch (e) {
+      print('❌ Failed to initiate call: $e');
+      _showErrorSnackbar('Failed to start call: $e');
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -203,10 +237,9 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.videocam),
-            onPressed: () {
-              // TODO: Implement video call
-            },
+            icon: const Icon(Icons.call),
+            tooltip: 'Voice Call',
+            onPressed: _initiateVoiceCall,
           ),
           PopupMenuButton<String>(
             onSelected: (value) {

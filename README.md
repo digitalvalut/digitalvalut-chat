@@ -34,6 +34,7 @@
 - ✅ **True Privacy**: No servers, no data collection, no tracking
 - ✅ **Quantum-Resistant**: Post-quantum cryptography ready for the future
 - ✅ **P2P Communication**: Direct peer-to-peer messaging via WebRTC
+- ✅ **Secure Voice Calls**: End-to-end encrypted voice calling with military-grade encryption
 - ✅ **Ephemeral Messages**: Self-destructing messages that leave no trace
 - ✅ **Blockchain Identity**: TON blockchain wallet integration
 - ✅ **Local AI**: On-device LLM for translation and spam detection
@@ -54,6 +55,14 @@
 - **WebRTC Data Channels**: Real-time encrypted messaging
 - **NAT Traversal**: STUN/TURN support for global connectivity
 - **Offline Mode**: Messages queued and synced when back online
+
+### 📞 Secure Voice Calling
+- **End-to-End Encrypted Audio**: Military-grade encryption for all voice streams
+- **WebRTC Voice Channels**: High-quality peer-to-peer voice calls
+- **Advanced Audio Processing**: Echo cancellation, noise suppression, auto-gain control
+- **Call Controls**: Mute, speaker toggle, and end call functions
+- **Connection Indicators**: Real-time call status and duration display
+- **Public STUN/TURN Servers**: Reliable connectivity across all network conditions
 
 ### ⏱️ Ephemeral Messages
 - **Self-Destructing**: Set messages to auto-delete after viewing

@@ -1,25 +1,41 @@
 
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
 import '../models/message.dart';
 import '../models/contact.dart';
 import '../models/conversation.dart';
 
+// Platform-specific imports
+// ignore: unused_import
+import 'dart:io' if (dart.library.html) 'dart:html';
+// ignore: depend_on_referenced_packages
+import 'package:sqflite/sqflite.dart' if (dart.library.html) 'package:sqflite/sqflite.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path_provider/path_provider.dart' if (dart.library.html) 'package:path_provider/path_provider.dart';
+
 /// Database service for local data storage
+/// Note: On web, this service has limited functionality
 class DatabaseService {
-  static Database? _database;
+  static dynamic _database;
   
-  Future<Database> get database async {
+  Future<dynamic> get database async {
+    if (kIsWeb) {
+      throw UnimplementedError('Database not supported on web platform');
+    }
     if (_database != null) return _database!;
     _database = await initialize();
     return _database!;
   }
   
   /// Initialize the database
-  Future<Database> initialize() async {
-    final Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  Future<dynamic> initialize() async {
+    if (kIsWeb) {
+      // Web doesn't support SQLite - would need to use IndexedDB or similar
+      print('Web platform detected - database not initialized');
+      return null;
+    }
+    
+    final documentsDirectory = await getApplicationDocumentsDirectory();
     final String path = join(documentsDirectory.path, 'digitalvalut.db');
     
     return await openDatabase(

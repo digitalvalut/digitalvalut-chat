@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 
@@ -13,24 +14,36 @@ void main() async {
   // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Lock device orientation to portrait
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Platform-specific initialization (mobile only)
+  if (!kIsWeb) {
+    // Lock device orientation to portrait
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    
+    // Enable screenshot protection globally (Android only)
+    try {
+      await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
+    } catch (e) {
+      // Ignore error on iOS or other platforms
+      debugPrint('Screenshot protection not available: $e');
+    }
+  }
   
-  // Enable screenshot protection globally
-  await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-  
-  // Initialize database
-  final databaseService = DatabaseService();
-  await databaseService.initialize();
+  // Initialize database (conditional for web)
+  DatabaseService? databaseService;
+  if (!kIsWeb) {
+    databaseService = DatabaseService();
+    await databaseService.initialize();
+  }
   
   // Run the app
   runApp(
     MultiProvider(
       providers: [
-        Provider<DatabaseService>.value(value: databaseService),
+        if (databaseService != null)
+          Provider<DatabaseService>.value(value: databaseService),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const DigitalValutApp(),

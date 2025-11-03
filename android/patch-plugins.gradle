@@ -1,0 +1,13 @@
+// This script patches plugins that don't have namespace set
+gradle.projectsEvaluated {
+    subprojects { subproject ->
+        if (subproject.hasProperty('android')) {
+            subproject.android {
+                // Set namespace for flutter_windowmanager if not set
+                if (!namespace && subproject.name == 'flutter_windowmanager') {
+                    namespace = 'com.example.flutter_windowmanager'
+                }
+            }
+        }
+    }
+}

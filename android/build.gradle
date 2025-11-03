@@ -22,24 +22,11 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
-    
-    // Fix for plugins missing namespace
-    afterEvaluate { project ->
-        if (project.hasProperty('android')) {
-            project.android {
-                if (namespace == null) {
-                    // Set namespace based on the plugin package or a default
-                    if (project.name == 'flutter_windowmanager') {
-                        namespace 'com.example.flutter_windowmanager'
-                    }
-                }
-            }
-        }
-    }
 }
+
+// Apply plugin namespace patches
+apply from: "patch-plugins.gradle"
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir

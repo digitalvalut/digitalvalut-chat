@@ -25,6 +25,20 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+    
+    // Fix for plugins missing namespace
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    // Set namespace based on the plugin package or a default
+                    if (project.name == 'flutter_windowmanager') {
+                        namespace 'com.example.flutter_windowmanager'
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {

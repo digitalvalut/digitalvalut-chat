@@ -23,4 +23,25 @@ plugins {
     id "org.jetbrains.kotlin.android" version "1.9.0" apply false
 }
 
+// Configure plugin namespaces before evaluation
+gradle.beforeSettings {
+    // This will be applied to all subprojects
+}
+
 include ":app"
+
+// Fix namespace issues for plugins
+gradle.rootProject {
+    allprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty('android')) {
+                if (project.name == 'qr_code_scanner') {
+                    project.android.namespace = 'net.touchcapture.qr.flutterqr'
+                }
+                if (project.name == 'flutter_windowmanager') {
+                    project.android.namespace = 'com.example.flutter_windowmanager'
+                }
+            }
+        }
+    }
+}

@@ -1,14 +1,12 @@
 // This script patches plugins that don't have namespace set
-gradle.projectsEvaluated {
-    subprojects { subproject ->
-        if (subproject.hasProperty('android')) {
+subprojects { subproject ->
+    subproject.plugins.whenPluginAdded { plugin ->
+        if (plugin.class.name.contains('AppPlugin') || plugin.class.name.contains('LibraryPlugin')) {
             subproject.android {
-                // Set namespace for flutter_windowmanager if not set
-                if (!namespace && subproject.name == 'flutter_windowmanager') {
+                if (subproject.name == 'flutter_windowmanager' && !namespace) {
                     namespace = 'com.example.flutter_windowmanager'
                 }
-                // Set namespace for qr_code_scanner if not set
-                if (!namespace && subproject.name == 'qr_code_scanner') {
+                if (subproject.name == 'qr_code_scanner' && !namespace) {
                     namespace = 'net.touchcapture.qr.flutterqr'
                 }
             }

@@ -1,0 +1,100 @@
+
+name: digitalvalut_chat
+description: Military-grade secure messaging with quantum-resistant encryption
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI & Material Design
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.1.0
+  
+  # Cryptography
+  cryptography: ^2.7.0
+  pointycastle: ^3.9.1
+  
+  # WebRTC for P2P Communication
+  flutter_webrtc: ^0.9.48
+  
+  # Database
+  sqflite: ^2.3.3
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  
+  # Secure Storage
+  flutter_secure_storage: ^9.2.2
+  
+  # Connectivity & Networking
+  connectivity_plus: ^6.0.5
+  http: ^1.2.2
+  
+  # Background Tasks
+  workmanager: ^0.5.2
+  
+  # Biometric Authentication
+  local_auth: ^2.3.0
+  
+  # Screenshot Blocking
+  flutter_windowmanager: ^0.2.0
+  
+  # UUID Generation
+  uuid: ^4.5.1
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # QR Code
+  qr_flutter: ^4.1.0
+  qr_code_scanner: ^1.0.1
+  
+  # File Picker
+  file_picker: ^8.1.2
+  
+  # Image Picker
+  image_picker: ^1.1.2
+  
+  # Permissions
+  permission_handler: ^11.3.1
+  
+  # URL Launcher
+  url_launcher: ^6.3.1
+  
+  # Share
+  share_plus: ^10.0.2
+  
+  # Utilities
+  intl: ^0.19.0
+  crypto: ^3.0.5
+  convert: ^3.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/logo.png
+  
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
+        - asset: fonts/Roboto-Bold.ttf
+          weight: 700
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#2C3E50"
+  adaptive_icon_foreground: "assets/logo.png"
